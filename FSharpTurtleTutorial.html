@@ -1,0 +1,626 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>F# Turtle Tutorial</title>
+    <meta name="description" content="Introduction to F#">
+    <meta name="author" content="Luke Merrett &amp; Stuart Lang">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="//code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="//code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/night.css" id="theme">
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/deedle.css" />
+    <link type="text/css" rel="stylesheet" href="css/custom.css" />
+    <script src="fsharp.formatting/styles/tips.js" type="text/javascript"></script>
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <link rel="stylesheet" href="css/fsreveal.css">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+    </script>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <script language="javascript" type="text/javascript">
+        function init()
+        {
+            websocket = new WebSocket("ws://"+window.location.host+"/websocket");
+            websocket.onmessage = function(evt) { location.reload(); };
+        }
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body>
+    <div class="reveal">
+        <div class="tip" id="fs1">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = System.String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
+<div class="tip" id="fs2">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.float<br /><br />--------------------<br />type float = System.Double<br /><br />Full name: Microsoft.FSharp.Core.float<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float<br /><br />Full name: Microsoft.FSharp.Core.float&lt;_&gt;</div>
+<div class="tip" id="fs3">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
+<div class="tip" id="fs4">type &#39;T list = List&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Collections.list&lt;_&gt;</div>
+<div class="tip" id="fs5">module Option<br /><br />from Microsoft.FSharp.Core</div>
+<div class="tip" id="fs6">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs7">union case Option.None: Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs8">Multiple items<br />type Async<br />static member AsBeginEnd : computation:(&#39;Arg -&gt; Async&lt;&#39;T&gt;) -&gt; (&#39;Arg * AsyncCallback * obj -&gt; IAsyncResult) * (IAsyncResult -&gt; &#39;T) * (IAsyncResult -&gt; unit)<br />static member AwaitEvent : event:IEvent&lt;&#39;Del,&#39;T&gt; * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;&#39;T&gt; (requires delegate and &#39;Del :&gt; Delegate)<br />static member AwaitIAsyncResult : iar:IAsyncResult * ?millisecondsTimeout:int -&gt; Async&lt;bool&gt;<br />static member AwaitTask : task:Task -&gt; Async&lt;unit&gt;<br />static member AwaitTask : task:Task&lt;&#39;T&gt; -&gt; Async&lt;&#39;T&gt;<br />static member AwaitWaitHandle : waitHandle:WaitHandle * ?millisecondsTimeout:int -&gt; Async&lt;bool&gt;<br />static member CancelDefaultToken : unit -&gt; unit<br />static member Catch : computation:Async&lt;&#39;T&gt; -&gt; Async&lt;Choice&lt;&#39;T,exn&gt;&gt;<br />static member FromBeginEnd : beginAction:(AsyncCallback * obj -&gt; IAsyncResult) * endAction:(IAsyncResult -&gt; &#39;T) * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;&#39;T&gt;<br />static member FromBeginEnd : arg:&#39;Arg1 * beginAction:(&#39;Arg1 * AsyncCallback * obj -&gt; IAsyncResult) * endAction:(IAsyncResult -&gt; &#39;T) * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;&#39;T&gt;<br />static member FromBeginEnd : arg1:&#39;Arg1 * arg2:&#39;Arg2 * beginAction:(&#39;Arg1 * &#39;Arg2 * AsyncCallback * obj -&gt; IAsyncResult) * endAction:(IAsyncResult -&gt; &#39;T) * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;&#39;T&gt;<br />static member FromBeginEnd : arg1:&#39;Arg1 * arg2:&#39;Arg2 * arg3:&#39;Arg3 * beginAction:(&#39;Arg1 * &#39;Arg2 * &#39;Arg3 * AsyncCallback * obj -&gt; IAsyncResult) * endAction:(IAsyncResult -&gt; &#39;T) * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;&#39;T&gt;<br />static member FromContinuations : callback:((&#39;T -&gt; unit) * (exn -&gt; unit) * (OperationCanceledException -&gt; unit) -&gt; unit) -&gt; Async&lt;&#39;T&gt;<br />static member Ignore : computation:Async&lt;&#39;T&gt; -&gt; Async&lt;unit&gt;<br />static member OnCancel : interruption:(unit -&gt; unit) -&gt; Async&lt;IDisposable&gt;<br />static member Parallel : computations:seq&lt;Async&lt;&#39;T&gt;&gt; -&gt; Async&lt;&#39;T []&gt;<br />static member RunSynchronously : computation:Async&lt;&#39;T&gt; * ?timeout:int * ?cancellationToken:CancellationToken -&gt; &#39;T<br />static member Sleep : millisecondsDueTime:int -&gt; Async&lt;unit&gt;<br />static member Start : computation:Async&lt;unit&gt; * ?cancellationToken:CancellationToken -&gt; unit<br />static member StartAsTask : computation:Async&lt;&#39;T&gt; * ?taskCreationOptions:TaskCreationOptions * ?cancellationToken:CancellationToken -&gt; Task&lt;&#39;T&gt;<br />static member StartChild : computation:Async&lt;&#39;T&gt; * ?millisecondsTimeout:int -&gt; Async&lt;Async&lt;&#39;T&gt;&gt;<br />static member StartChildAsTask : computation:Async&lt;&#39;T&gt; * ?taskCreationOptions:TaskCreationOptions -&gt; Async&lt;Task&lt;&#39;T&gt;&gt;<br />static member StartImmediate : computation:Async&lt;unit&gt; * ?cancellationToken:CancellationToken -&gt; unit<br />static member StartWithContinuations : computation:Async&lt;&#39;T&gt; * continuation:(&#39;T -&gt; unit) * exceptionContinuation:(exn -&gt; unit) * cancellationContinuation:(OperationCanceledException -&gt; unit) * ?cancellationToken:CancellationToken -&gt; unit<br />static member SwitchToContext : syncContext:SynchronizationContext -&gt; Async&lt;unit&gt;<br />static member SwitchToNewThread : unit -&gt; Async&lt;unit&gt;<br />static member SwitchToThreadPool : unit -&gt; Async&lt;unit&gt;<br />static member TryCancelled : computation:Async&lt;&#39;T&gt; * compensation:(OperationCanceledException -&gt; unit) -&gt; Async&lt;&#39;T&gt;<br />static member CancellationToken : Async&lt;CancellationToken&gt;<br />static member DefaultCancellationToken : CancellationToken<br /><br />Full name: Microsoft.FSharp.Control.Async<br /><br />--------------------<br />type Async&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Control.Async&lt;_&gt;</div>
+<div class="tip" id="fs9">static member Async.Parallel : computations:seq&lt;Async&lt;&#39;T&gt;&gt; -&gt; Async&lt;&#39;T []&gt;</div>
+<div class="tip" id="fs10">val async : AsyncBuilder<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.async</div>
+<div class="tip" id="fs11">Multiple items<br />type MailboxProcessor&lt;&#39;Msg&gt; =<br />&#160;&#160;interface IDisposable<br />&#160;&#160;new : body:(MailboxProcessor&lt;&#39;Msg&gt; -&gt; Async&lt;unit&gt;) * ?cancellationToken:CancellationToken -&gt; MailboxProcessor&lt;&#39;Msg&gt;<br />&#160;&#160;member Post : message:&#39;Msg -&gt; unit<br />&#160;&#160;member PostAndAsyncReply : buildMessage:(AsyncReplyChannel&lt;&#39;Reply&gt; -&gt; &#39;Msg) * ?timeout:int -&gt; Async&lt;&#39;Reply&gt;<br />&#160;&#160;member PostAndReply : buildMessage:(AsyncReplyChannel&lt;&#39;Reply&gt; -&gt; &#39;Msg) * ?timeout:int -&gt; &#39;Reply<br />&#160;&#160;member PostAndTryAsyncReply : buildMessage:(AsyncReplyChannel&lt;&#39;Reply&gt; -&gt; &#39;Msg) * ?timeout:int -&gt; Async&lt;&#39;Reply option&gt;<br />&#160;&#160;member Receive : ?timeout:int -&gt; Async&lt;&#39;Msg&gt;<br />&#160;&#160;member Scan : scanner:(&#39;Msg -&gt; Async&lt;&#39;T&gt; option) * ?timeout:int -&gt; Async&lt;&#39;T&gt;<br />&#160;&#160;member Start : unit -&gt; unit<br />&#160;&#160;member TryPostAndReply : buildMessage:(AsyncReplyChannel&lt;&#39;Reply&gt; -&gt; &#39;Msg) * ?timeout:int -&gt; &#39;Reply option<br />&#160;&#160;...<br /><br />Full name: Microsoft.FSharp.Control.MailboxProcessor&lt;_&gt;<br /><br />--------------------<br />new : body:(MailboxProcessor&lt;&#39;Msg&gt; -&gt; Async&lt;unit&gt;) * ?cancellationToken:System.Threading.CancellationToken -&gt; MailboxProcessor&lt;&#39;Msg&gt;</div>
+<div class="tip" id="fs12">static member MailboxProcessor.Start : body:(MailboxProcessor&lt;&#39;Msg&gt; -&gt; Async&lt;unit&gt;) * ?cancellationToken:System.Threading.CancellationToken -&gt; MailboxProcessor&lt;&#39;Msg&gt;</div>
+<div class="tip" id="fs13">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs14">namespace System</div>
+<div class="tip" id="fs15">type Int32 =<br />&#160;&#160;struct<br />&#160;&#160;&#160;&#160;member CompareTo : value:obj -&gt; int + 1 overload<br />&#160;&#160;&#160;&#160;member Equals : obj:obj -&gt; bool + 1 overload<br />&#160;&#160;&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;&#160;&#160;member GetTypeCode : unit -&gt; TypeCode<br />&#160;&#160;&#160;&#160;member ToString : unit -&gt; string + 3 overloads<br />&#160;&#160;&#160;&#160;static val MaxValue : int<br />&#160;&#160;&#160;&#160;static val MinValue : int<br />&#160;&#160;&#160;&#160;static member Parse : s:string -&gt; int + 3 overloads<br />&#160;&#160;&#160;&#160;static member TryParse : s:string * result:int -&gt; bool + 1 overload<br />&#160;&#160;end<br /><br />Full name: System.Int32</div>
+<div class="tip" id="fs16">System.Int32.TryParse(s: string, result: byref&lt;int&gt;) : bool<br />System.Int32.TryParse(s: string, style: System.Globalization.NumberStyles, provider: System.IFormatProvider, result: byref&lt;int&gt;) : bool</div>
+<div class="tip" id="fs17">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
+<div class="tip" id="fs18">val fold : folder:(&#39;State -&gt; &#39;T -&gt; &#39;State) -&gt; state:&#39;State -&gt; list:&#39;T list -&gt; &#39;State<br /><br />Full name: Microsoft.FSharp.Collections.List.fold</div>
+
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section >
+<section >
+<h3>What is F#?</h3>
+<p>F# is a strongly typed functional programming language built atop the .NET CLI</p>
+<p>Originally developed by Don Syme from Microsoft Research, it has the conciseness of Python, strictness of Scala &amp; ecosystem of .NET.</p>
+</section>
+<section >
+<h3>Benefits</h3>
+<p><a href="https://fsharpforfunandprofit.com/why-use-fsharp/">Taken from Scott Wlaschin's summary here</a></p>
+<p>The "5Cs" of F#...</p>
+</section>
+<section >
+<h3>Conciseness</h3>
+<p>F# gets rid of a lot of the clutter / noise, removing curly brackets, semi colons etc:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Functions are very light weight</span>
+<span class="k">let</span> <span class="i">add</span> <span class="i">x</span> <span class="i">y</span> <span class="o">=</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>
+
+<span class="c">// This is a Record Type declaration; an immutable DTO</span>
+<span class="k">type</span> <span class="i">Person</span> <span class="o">=</span> {<span class="i">First</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">string</span>; <span class="i">Last</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 2)" onmouseover="showTip(event, 'fs1', 2)" class="i">string</span>}
+
+<span class="c">// Here we create an instance of the Person type</span>
+<span class="c">// It&#39;s type is inferred by the property names</span>
+<span class="k">let</span> <span class="i">bob</span> <span class="o">=</span> {<span class="i">First</span><span class="o">=</span><span class="s">&quot;Bob&quot;</span>; <span class="i">Last</span><span class="o">=</span><span class="s">&quot;Baggings&quot;</span>}
+</code></pre></td>
+</tr>
+</table>
+<p>A lot of this is due to a powerful type inference system the compiler uses than can work out static types without having to explicitly declare them.</p>
+</section>
+<section >
+<h3>Convenience</h3>
+<p>The lightweight nature of F# makes common programming tasks simpler.  This is especially true for rapidly building domain models.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Low overhead type definitions</span>
+<span class="k">type</span> <span class="i">Coord</span> <span class="o">=</span> {<span class="i">Lat</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs2', 3)" onmouseover="showTip(event, 'fs2', 3)" class="i">float</span>; <span class="i">Long</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs2', 4)" onmouseover="showTip(event, 'fs2', 4)" class="i">float</span>}
+
+<span class="k">type</span> <span class="i">TimePeriod</span> <span class="o">=</span> <span class="i">Hour</span> | <span class="i">Day</span> | <span class="i">Week</span> | <span class="i">Year</span>
+<span class="k">type</span> <span class="i">Temperature</span> <span class="o">=</span> <span class="i">C</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs3', 5)" onmouseover="showTip(event, 'fs3', 5)" class="i">int</span> | <span class="i">F</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs3', 6)" onmouseover="showTip(event, 'fs3', 6)" class="i">int</span>
+<span class="k">type</span> <span class="i">Appointment</span> <span class="o">=</span> <span class="i">OneTime</span> <span class="k">of</span> <span class="i">DateTime</span> | <span class="i">Recurring</span> <span class="k">of</span> <span class="i">DateTime</span> <span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="i">list</span>
+
+<span class="c">// &quot;Railway orientated&quot; concise, easy to read chains of logic</span>
+<span class="i">config</span>
+<span class="o">|&gt;</span> <span class="i">TableManager</span><span class="o">.</span><span class="i">createTable</span> <span class="i">client</span>
+<span class="o">|&gt;</span> <span class="i">TableManager</span><span class="o">.</span><span class="i">waitForTableCreation</span> <span class="i">client</span>
+<span class="o">|&gt;</span> <span class="i">DataManager</span><span class="o">.</span><span class="i">streamRowsFromSourceFile</span>
+<span class="o">|&gt;</span> <span class="i">DataManager</span><span class="o">.</span><span class="i">loadRowsIntoDynamo</span> <span class="i">client</span>
+</code></pre></td>
+</tr>
+</table>
+<p>As functions are first class citizens, the emphasis is on functional composition of reusable code over inheritance.</p>
+</section>
+<section >
+<h3>Correctness</h3>
+<p>Values are immutable by default, nulls are replaced with <code>Option</code> types, and it supports explicit units of measure, preventing a large class of errors.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">bob</span> <span class="o">=</span> {<span class="i">First</span><span class="o">=</span><span class="s">&quot;Bob&quot;</span>; <span class="i">Last</span><span class="o">=</span><span class="s">&quot;Baggings&quot;</span>}
+<span class="i">bob</span><span class="o">.</span><span class="i">First</span> <span class="o">&lt;-</span> <span class="s">&quot;Jim&quot;</span> <span class="c">// Assignment error</span>
+
+<span class="c">// Option types explicitly capture that a value may not be present</span>
+<span class="c">// These can be thought of like Nullable&lt;T&gt; types in .Net</span>
+<span class="k">let</span> <span class="i">getResponseBody</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs1', 8)" onmouseover="showTip(event, 'fs1', 8)" class="i">string</span> <span onmouseout="hideTip(event, 'fs5', 9)" onmouseover="showTip(event, 'fs5', 9)" class="i">Option</span> <span class="o">=</span> 
+    <span class="k">match</span> <span class="i">response</span><span class="o">.</span><span class="i">StatusCode</span> <span class="k">with</span>
+    | <span class="n">200</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs6', 10)" onmouseover="showTip(event, 'fs6', 10)" class="i">Some</span> <span class="i">response</span><span class="o">.</span><span class="i">Body</span>
+    | <span class="n">404</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs7', 11)" onmouseover="showTip(event, 'fs7', 11)" class="i">None</span>
+
+<span class="k">let</span> <span class="i">distance</span> <span class="o">=</span> <span class="n">10</span><span class="o">&lt;</span><span class="i">m</span><span class="o">&gt;</span> <span class="o">+</span> <span class="n">10</span><span class="o">&lt;</span><span class="i">ft</span><span class="o">&gt;</span> <span class="c">// errors, can&#39;t add meters to feet</span>
+</code></pre></td>
+</tr>
+</table>
+<p>As F# is strongly typed, you get all the compile time benefits of .Net without the overhead.</p>
+</section>
+<section >
+<h3>Concurrency</h3>
+<p>F# has a set of built in libraries for asynchronous logic; not only with the <code>async {}</code> wrapper but also a built-in actor model.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">Async</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="i">Parallel</span> [ <span class="k">for</span> <span class="i">i</span> <span class="k">in</span> <span class="n">0..</span><span class="n">40</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="i">async</span> {
+    <span class="k">return</span> <span class="i">fib</span>(<span class="i">i</span>)
+}]
+
+<span onmouseout="hideTip(event, 'fs11', 15)" onmouseover="showTip(event, 'fs11', 15)" class="i">MailboxProcessor</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 16)" onmouseover="showTip(event, 'fs12', 16)" class="i">Start</span>(<span class="k">fun</span> <span class="i">inbox</span><span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs10', 17)" onmouseover="showTip(event, 'fs10', 17)" class="i">async</span> {
+    <span class="k">let!</span> <span class="i">msg</span> <span class="o">=</span> <span class="i">inbox</span><span class="o">.</span><span class="i">Receive</span>()
+    <span onmouseout="hideTip(event, 'fs13', 18)" onmouseover="showTip(event, 'fs13', 18)" class="i">printfn</span> <span class="s">&quot;message is: %s&quot;</span> <span class="i">msg</span>
+}) 
+</code></pre></td>
+</tr>
+</table>
+<p>This is enhanced by the focus on immutable data structures which allow sharing of state &amp; avoid locking of resources.</p>
+</section>
+<section >
+<h3>Completeness</h3>
+<p>Whilst F# focused on being functional, it is a multi-paradigm language that supports OO if required.</p>
+<p>As it is built ontop of the .Net CLI, it has full access to the existing .Net ecosystem, NuGet packages and C# assemblies.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Values can be made mutable if necessary</span>
+<span class="k">let</span> <span class="k">mutable</span> <span class="i">counter</span> <span class="o">=</span> <span class="n">0</span>
+
+<span class="c">// .Net libaries can be used seamlessly</span>
+<span class="k">open</span> <span class="i">Newtonsoft</span><span class="o">.</span><span class="i">Json</span>
+<span class="k">let</span> <span class="i">person</span> <span class="o">=</span> <span class="i">JsonConvert</span><span class="o">.</span><span class="i">DeserializeObject</span><span class="o">&lt;</span><span class="i">Person</span><span class="o">&gt;</span>(<span class="i">content</span>)
+
+<span class="c">// Out parameters are actually handled in a cleaner way</span>
+<span class="k">let</span> (<span class="i">successfully</span>, <span class="i">parsedValue</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs14', 19)" onmouseover="showTip(event, 'fs14', 19)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs15', 20)" onmouseover="showTip(event, 'fs15', 20)" class="i">Int32</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 21)" onmouseover="showTip(event, 'fs16', 21)" class="i">TryParse</span>(<span class="s">&quot;123&quot;</span>);
+</code></pre></td>
+</tr>
+</table>
+<p>Supported in both .Net 4.5+ and .Net Core.  Has tooling for Visual Studio 2012 onwards &amp; Visual Studio Code</p>
+</section>
+</section>
+<section >
+<section >
+<h3>The Exercise</h3>
+<p>We'll be working through an F# script that models a Logo Turtle, allow us to give it basic commands such as <code>Move 10</code>, <code>Turn Left 90</code>, <code>Pen Down</code> and <code>Set Colour Green</code>.</p>
+<p>The script is incomplete; as we walk through the workshop we will be adding to the code until it is a functional Logo program.</p>
+<p>At the end we'll pass a series of commands to our Turtle and check it responds as expected.</p>
+</section>
+<section >
+<h3>Exercise Setup</h3>
+<p>Clone the <a href="https://github.com/FSharpBristol/FSharpTurtleTutorial">F# Turtle Tutorial</a></p>
+<p>Walk through the <code>README.md</code> file to get F# running locally</p>
+<p>Then open <code>./Exercise/TurtleRunner.fs</code></p>
+</section>
+<section >
+<h3>The FSI</h3>
+<p>The F# tools you've installed include a REPL called "FSI".  This will let us execute each part of the tutorial without having to build each time, whilst allowing us to execute individual lines or sections of code on the fly.</p>
+<p>To use this in VS Code, select the lines you wish to execute and press Alt+Enter.  This will send the code to FSI and run it, giving you back the declared types and output.</p>
+<p>Don't select the <code>module TurtleRunner</code> line when using FSI, it won't be able to interpret it.</p>
+</section>
+<section >
+<h3>Basic Discriminted Unions</h3>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">Animal</span> <span class="o">=</span> <span class="i">Cat</span> | <span class="i">Dog</span> | <span class="i">Fish</span> | <span class="i">GuineaPig</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Otherwise known as option types; in the most basic sense these can be thought of as enums.</p>
+<p>Fill in the exercise script so we have:</p>
+<ul>
+<li>Pen states of "Up" and "Down"</li>
+<li>Colours of "Black", "Red", "Blue" and "Green"</li>
+<li>Turn Directions of "Left" and "Right"</li>
+</ul>
+</section>
+<section >
+<h3>Record Types</h3>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">Person</span> <span class="o">=</span> {<span class="i">firstName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 22)" onmouseover="showTip(event, 'fs1', 22)" class="i">string</span>; <span class="i">lastName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 23)" onmouseover="showTip(event, 'fs1', 23)" class="i">string</span>; <span class="i">age</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs3', 24)" onmouseover="showTip(event, 'fs3', 24)" class="i">int</span>}
+</code></pre></td>
+</tr>
+</table>
+<p>Record types can be thought of as sealed classes with a set of read only properties.</p>
+<p>They act like value types, as in when equality is checked the value of all properties is used, not the object reference.</p>
+<p>Fill in the Turtle record so it has these properties:</p>
+<ul>
+<li>"xpos" - float type</li>
+<li>"ypos" - float type</li>
+<li>"angle" - float type</li>
+<li>"penState" - PenState type</li>
+<li>"colour" - Colour type</li>
+</ul>
+</section>
+<section >
+<h3>Significant Whitespace</h3>
+<p>F#, just like Python, uses significant whitespace for indentation.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Totally cool</span>
+<span class="k">type</span> <span class="i">Person</span> <span class="o">=</span> {
+    <span class="i">firstName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 25)" onmouseover="showTip(event, 'fs1', 25)" class="i">string</span>
+    <span class="i">lastName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 26)" onmouseover="showTip(event, 'fs1', 26)" class="i">string</span>}
+
+<span class="c">// Not cool, won&#39;t compile</span>
+<span class="k">type</span> <span class="i">Person</span> <span class="o">=</span> {
+    <span class="i">firstName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 27)" onmouseover="showTip(event, 'fs1', 27)" class="i">string</span>
+<span class="i">lastName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 28)" onmouseover="showTip(event, 'fs1', 28)" class="i">string</span>}
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h3>Line Endings &amp; Semi Colons</h3>
+<p>You'll also see some of the examples use <code>;</code> and some use new lines.  The two are synonymous with each other</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// If on one line, you need to use &quot;;&quot;</span>
+<span class="k">type</span> <span class="i">Person</span> <span class="o">=</span> {<span class="i">firstName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 29)" onmouseover="showTip(event, 'fs1', 29)" class="i">string</span>; <span class="i">lastName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 30)" onmouseover="showTip(event, 'fs1', 30)" class="i">string</span>; <span class="i">age</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs3', 31)" onmouseover="showTip(event, 'fs3', 31)" class="i">int</span>}
+
+<span class="c">// But on multiple lines, the new line acts as the terminator</span>
+<span class="k">type</span> <span class="i">Person</span> <span class="o">=</span> {
+    <span class="i">firstName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 32)" onmouseover="showTip(event, 'fs1', 32)" class="i">string</span>
+    <span class="i">lastName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs1', 33)" onmouseover="showTip(event, 'fs1', 33)" class="i">string</span>
+    <span class="i">age</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs3', 34)" onmouseover="showTip(event, 'fs3', 34)" class="i">int</span>}
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h3>The Algebraic Type System</h3>
+<p>Think of the type system as set logic rather than defining objects</p>
+<p>Sum types are "Discriminated Unions", Product types are "Tuples"</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Sum type - denoted by &quot;|&quot;</span>
+<span class="c">// This type contains a sum of all the possible values</span>
+<span class="k">type</span> <span class="i">Speed</span> <span class="o">=</span> <span class="i">Slow</span> | <span class="i">Fast</span>    <span class="c">// 2 possible values</span>
+<span class="k">type</span> <span class="i">Direction</span> <span class="o">=</span> <span class="i">Up</span> | <span class="i">Down</span>  <span class="c">// 2 possible values</span>
+
+<span class="c">// Product type - denoted by &quot;*&quot;</span>
+<span class="c">// Contains:</span>
+<span class="c">//  - A set of all possible Speeds </span>
+<span class="c">//  - TIMES</span>
+<span class="c">//  - A set of all possible Directions</span>
+<span class="k">type</span> <span class="i">Movement</span> <span class="o">=</span> <span class="i">Moving</span> <span class="k">of</span> <span class="i">Speed</span> <span class="o">*</span> <span class="i">Direction</span> 
+
+<span class="c">// The Product of our 2 sum types is 4 possible values</span>
+<span class="i">Moving</span>(<span class="i">Slow</span>, <span class="i">Up</span>)
+<span class="i">Moving</span>(<span class="i">Slow</span>, <span class="i">Down</span>)
+<span class="i">Moving</span>(<span class="i">Fast</span>, <span class="i">Up</span>)
+<span class="i">Moving</span>(<span class="i">Fast</span>, <span class="i">Down</span>)
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h3>Discriminated Unions with Values</h3>
+<p>Here's the true power of discriminated unions; they allow us to declare values that must be provided to initialise them.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">Shape</span> <span class="o">=</span>
+    | <span class="i">Circle</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs3', 35)" onmouseover="showTip(event, 'fs3', 35)" class="i">int</span> 
+    | <span class="i">Rectangle</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs3', 36)" onmouseover="showTip(event, 'fs3', 36)" class="i">int</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs3', 37)" onmouseover="showTip(event, 'fs3', 37)" class="i">int</span>
+    | <span class="i">Point</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs3', 38)" onmouseover="showTip(event, 'fs3', 38)" class="i">int</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs3', 39)" onmouseover="showTip(event, 'fs3', 39)" class="i">int</span>
+</code></pre></td>
+</tr>
+</table>
+<p>To initialise a <code>Rectangle</code> we'd then write <code>Rectangle(40,20)</code>.</p>
+<p>Fill in the Command type so it has these choices:</p>
+<ul>
+<li>Move which takes in a float</li>
+<li>Turn which takes a TurnDirection and a float</li>
+<li>SetPen which takes in a PenState</li>
+<li>SetColour which takes in a Colour</li>
+</ul>
+</section>
+<section >
+<h3>Functions</h3>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">add</span> <span class="i">x</span> <span class="i">y</span> <span class="o">=</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Functions in F# are extremely light weight, this is as the compiler can infer types for most cases.</p>
+<p>Here note as well we aren't saying return explicitly; instead F# always returns the last value in the function.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">add</span> (<span class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs3', 40)" onmouseover="showTip(event, 'fs3', 40)" class="i">int</span>) (<span class="i">y</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs3', 41)" onmouseover="showTip(event, 'fs3', 41)" class="i">int</span>)<span class="o">:</span> <span onmouseout="hideTip(event, 'fs3', 42)" onmouseover="showTip(event, 'fs3', 42)" class="i">int</span> <span class="o">=</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Above is an example with explicit declarations of the types expected.  The signature would be <code>int -&gt; int -&gt; int</code> with the last type being the return type.</p>
+</section>
+<section >
+<h3>Pattern Matching</h3>
+<p>We've got a set of commands which are of the discriminated union type <code>Command</code>; so how do we decompose the values based on the type of command?</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">match</span> <span class="i">command</span> <span class="k">with</span>
+    | <span class="i">Move</span> <span class="i">distance</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs13', 43)" onmouseover="showTip(event, 'fs13', 43)" class="i">printfn</span> <span class="s">&quot;move %f&quot;</span> <span class="i">distance</span>
+    | <span class="i">Turn</span>(<span class="i">direction</span>, <span class="i">degrees</span>) <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs13', 44)" onmouseover="showTip(event, 'fs13', 44)" class="i">printfn</span> <span class="s">&quot;turn %A %f&quot;</span> <span class="i">direction</span> <span class="i">degrees</span>
+    | <span class="i">SetPen</span> <span class="i">state</span> <span class="k">-&gt;</span>  <span onmouseout="hideTip(event, 'fs13', 45)" onmouseover="showTip(event, 'fs13', 45)" class="i">printfn</span> <span class="s">&quot;set pen to %A&quot;</span> <span class="i">state</span>
+    | <span class="i">SetColour</span> <span class="i">colour</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs13', 46)" onmouseover="showTip(event, 'fs13', 46)" class="i">printfn</span> <span class="s">&quot;set colour to %A&quot;</span> <span class="i">colour</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Pattern matching allows you to check type <strong>and</strong> bind the values inside that type in one step.  Think switch statements on crack.</p>
+<p>Apart from being succinct, one of the core benefits of pattern matching is that the compiler warns you if any of the possible states have been missed.</p>
+<p>Copy this code into the <code>processCommand</code> function for now.</p>
+</section>
+<section >
+<h3>Immutability and the "With" Syntax</h3>
+<p>We have the <code>processCommand</code> function with the signature <code>Turtle -&gt; Command -&gt; Turtle</code>; so we know we need to return a modified turtle based on the command we have received (e.g: the turtle has moved 10 places).</p>
+<p>However F# types are immutable by default, so we need a way to create a <strong>new</strong> <code>Turtle</code> record type to pass back.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">{<span class="i">turtle</span> <span class="k">with</span> <span class="i">xpos</span><span class="o">=</span><span class="n">20</span>, <span class="i">ypos</span><span class="o">=</span><span class="n">10</span>}
+</code></pre></td>
+</tr>
+</table>
+<p>The <code>with</code> syntax in F# lets us do this without copying each value manually to a new record type, here it's saying:</p>
+<p>"Create a new record type instance using all fields in turtle but change xpos and ypos"</p>
+</section>
+<section >
+<h3>Implementing Process Command</h3>
+<p>Below is the logic you will need to move the turtle based on its current angle.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">angleInRads</span> <span class="o">=</span> <span class="i">turtle</span><span class="o">.</span><span class="i">angle</span> <span class="o">*</span> (<span class="i">Math</span><span class="o">.</span><span class="i">PI</span><span class="o">/</span><span class="n">180.0</span>)
+{<span class="i">turtle</span> <span class="k">with</span> 
+    <span class="i">xpos</span> <span class="o">=</span> <span class="i">turtle</span><span class="o">.</span><span class="i">xpos</span> <span class="o">+</span> (<span class="i">distance</span> <span class="o">*</span> <span class="i">Math</span><span class="o">.</span><span class="i">Sin</span>(<span class="i">angleInRads</span>))
+    <span class="i">ypos</span> <span class="o">=</span> <span class="i">turtle</span><span class="o">.</span><span class="i">ypos</span> <span class="o">+</span> (<span class="i">distance</span> <span class="o">*</span> <span class="i">Math</span><span class="o">.</span><span class="i">Cos</span>(<span class="i">angleInRads</span>))}
+</code></pre></td>
+</tr>
+</table>
+<p>Copy this in after <code>| Move distance -&gt;</code> in the <code>processCommand</code> function.</p>
+<p>Once you add this the other match statements will go red; this is because <code>Move distance</code> is now returning a Turtle type, but the other statements are still returning a unit type.</p>
+<p>Now finish implementing the rest of the pattern match expressions for <code>Turn</code>, <code>SetPen</code> and <code>SetColour</code></p>
+</section>
+<section >
+<h3>Using the Process Command</h3>
+<p>Now we've implemented the solution, we can uncomment all code under:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// --- Uncomment this section to run a full test ---</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Note how block comments in F# use <code>(* *)</code> instead of <code>/* */</code></p>
+</section>
+<section >
+<h3>Lists</h3>
+<p>The below logic creates a <code>List&lt;Command&gt;</code> to test our domain and function.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">commands</span> <span class="o">=</span> [
+    <span class="i">Move</span> <span class="n">20.0</span>
+    <span class="i">Turn</span>(<span class="i">Left</span>, <span class="n">90.0</span>)
+    <span class="i">Move</span> <span class="n">20.0</span>
+    <span class="i">Turn</span>(<span class="i">Right</span>, <span class="n">90.0</span>)
+    <span class="i">SetColour</span> <span class="i">Red</span> 
+    <span class="i">Move</span> <span class="n">20.0</span>
+    <span class="i">Turn</span>(<span class="i">Right</span>, <span class="n">90.0</span>)
+    <span class="i">SetPen</span> <span class="i">Up</span> 
+    <span class="i">Move</span> <span class="n">40.0</span>
+]
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h3>Creating Record Types</h3>
+<p>This creates our initial turtle record:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">turtle</span> <span class="o">=</span> {<span class="i">xpos</span><span class="o">=</span><span class="n">0.0</span>; <span class="i">ypos</span><span class="o">=</span><span class="n">0.0</span>; <span class="i">angle</span><span class="o">=</span><span class="n">90.0</span>; <span class="i">penState</span><span class="o">=</span><span class="i">Down</span>; <span class="i">colour</span><span class="o">=</span><span class="i">Black</span>}
+</code></pre></td>
+</tr>
+</table>
+<p>Each value of the record type must be supplied, there are no nulls.</p>
+<p>Note how we've not specified the name of the record type being instantiated, the F# compiler infers this from the property names</p>
+</section>
+<section >
+<h3>List.fold</h3>
+<p>This is like a <code>reduce</code> operation; it takes in an initial value (<code>turtle</code>) and a list to iterate over (<code>commands</code>).</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs17', 47)" onmouseover="showTip(event, 'fs17', 47)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 48)" onmouseover="showTip(event, 'fs18', 48)" class="i">fold</span> (<span class="k">fun</span> <span class="i">agg</span> <span class="i">command</span> <span class="k">-&gt;</span> <span class="i">processCommand</span> <span class="i">agg</span> <span class="i">command</span>) 
+          <span class="i">turtle</span> 
+          <span class="i">commands</span>
+</code></pre></td>
+</tr>
+</table>
+<p>For each item in the list, it passes in the current aggregator (<code>agg</code>) and the current list item (<code>command</code>), applies a function to them which returns a new aggregator (so here, a new <code>Turtle</code> type).</p>
+<p>In our context; this boils down to taking a turtle and a command, processing that command, then returning a turtle with the updated state so we can apply the next command</p>
+</section>
+<section >
+<h3>Pipe Forward Operator</h3>
+<p>The pipe forward operator <code>|&gt;</code> takes the preceding value and puts it into the last argument of the following function.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">movedTurtle</span> <span class="o">=</span> 
+    <span class="i">commands</span> 
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs17', 49)" onmouseover="showTip(event, 'fs17', 49)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 50)" onmouseover="showTip(event, 'fs18', 50)" class="i">fold</span> (<span class="k">fun</span> <span class="i">agg</span> <span class="i">command</span> <span class="k">-&gt;</span> <span class="i">processCommand</span> <span class="i">agg</span> <span class="i">command</span>) <span class="i">turtle</span>
+</code></pre></td>
+</tr>
+</table>
+<p>This is really syntax sugar however leads to code that states it's intentions clearly, such as</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">File</span><span class="o">.</span><span class="i">ReadAllText</span> <span class="s">&quot;appsettings.json&quot;</span> 
+<span class="o">|&gt;</span> <span class="i">JsonConvert</span><span class="o">.</span><span class="i">DeserializeObject</span><span class="o">&lt;</span><span class="i">AppSettings</span><span class="o">&gt;</span> 
+<span class="o">|&gt;</span> <span class="i">ConnectToDatabase</span>
+<span class="o">|&gt;</span> <span class="i">GetUserList</span> 
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h3>Testing the Logic</h3>
+<p>In VS Code, select the whole file except the <code>module TurtleRunner</code> line and press Alt+Enter to send to F# Interactive</p>
+<p>If the exercise is completed, this should run without error returning a Turtle in the state:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">{<span class="i">xpos</span> <span class="o">=</span> <span class="n">40.0</span>; <span class="i">ypos</span> <span class="o">=</span> <span class="o">-</span><span class="n">20.0</span>; <span class="i">angle</span> <span class="o">=</span> <span class="n">180.0</span>; <span class="i">penState</span> <span class="o">=</span> <span class="i">Up</span>; <span class="i">colour</span> <span class="o">=</span> <span class="i">Red</span>}
+</code></pre></td>
+</tr>
+</table>
+</section>
+</section>
+<section >
+<h3>Where Next?</h3>
+<p>If you'd like to continue learning F#:</p>
+<ul>
+<li><a href="https://fsharpforfunandprofit.com/series/why-use-fsharp.html">Do the "Why Use F#" series on F# For Fun And Profit</a></li>
+<li><a href="https://github.com/ChrisMarinos/FSharpKoans">Do the F# Koans from Chris Marinos</a></li>
+<li><a href="https://fsharpforfunandprofit.com/ddd/">Watch Scott's Talk on Domain Driven Design in F#</a></li>
+<li><a href="https://www.meetup.com/FSharpBristol/">Come to the F# |&gt; Bristol meetup</a></li>
+</ul>
+</section>
+
+
+        </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script>
+        // Add the nohighlight class and data-noescape attribute to code elements that have already been formatted by FSharp.Formatting
+        $('pre.highlighted code').addClass('nohighlight').attr('data-noescape', '');
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Parallax scrolling
+            // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+            // parallaxBackgroundSize: '2100px 900px',
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+            ]
+        });
+
+    </script>
+</body>
+</html>
+
