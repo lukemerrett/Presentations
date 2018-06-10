@@ -1,0 +1,643 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Million Song Dataset – SQL Server vs Apache Hadoop Challenge</title>
+    <meta name="description" content="Exploring two very distinct ways of loading a large dataset">
+    <meta name="author" content="Luke Merrett &amp; Tim van Wijk">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="//code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="//code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/night.css" id="theme">
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/deedle.css" />
+    <link type="text/css" rel="stylesheet" href="css/custom.css" />
+    <script src="fsharp.formatting/styles/tips.js" type="text/javascript"></script>
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <link rel="stylesheet" href="css/fsreveal.css">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+    </script>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <script language="javascript" type="text/javascript">
+        function init()
+        {
+            websocket = new WebSocket("ws://"+window.location.host+"/websocket");
+            websocket.onmessage = function(evt) { location.reload(); };
+        }
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body>
+    <div class="reveal">
+        
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section >
+<h2>Million Song Dataset</h2>
+<h3>SQL Server vs Apache Hadoop Challenge</h3>
+<p>Luke Merrett &amp; Tim van Wijk</p>
+</section>
+<section >
+<section >
+<h2>The Challenge</h2>
+<blockquote>
+<p>Using a large real life data set, how does using SQL Server compare to Hadoop?</p>
+</blockquote>
+</section>
+<section >
+<h2>Source Data</h2>
+<p>The <a href="https://labrosa.ee.columbia.edu/millionsong/">Million Song Dataset</a>, a 280GB (compressed) set of data.</p>
+<p>Contains detailed records of the top popular songs across the world.</p>
+<p>The data is freely available &amp; frequently used in education.</p>
+</section>
+<section >
+<p>Could this data set be considered "big data"?</p>
+</section>
+<section >
+<h2>The "4Vs" of Big Data</h2>
+<ul>
+<li>
+<strong>Volume</strong>
+<ul>
+<li>An amount of data so large it is difficult to process quickly</li>
+</ul>
+</li>
+<li>
+<strong>Velocity</strong>
+<ul>
+<li>The speed at which the data is generated makes it difficult to process fast enough to keep up</li>
+</ul>
+</li>
+<li>
+<strong>Variety</strong>
+<ul>
+<li>The data isn't just a singular agreed form but comes in lots of different, often incompatible formats</li>
+</ul>
+</li>
+<li>
+<strong>Veracity</strong>
+<ul>
+<li>The quality of the data varies greatly</li>
+</ul>
+</li>
+</ul>
+</section>
+<section >
+<h2>Do the "4Vs" Apply?</h2>
+<ul>
+<li>
+<strong>Volume</strong> - Yes
+<ul>
+<li>280GB compressed</li>
+<li>The data is sufficiently large that it is difficult to process</li>
+</ul>
+</li>
+<li>
+<strong>Velocity</strong> - No
+<ul>
+<li>Static data set, the data doesn't change</li>
+<li>The speed we can process it isn't a factor</li>
+</ul>
+</li>
+<li>
+<strong>Variety</strong> - No
+<ul>
+<li>The data comes in a single format (HDF5)</li>
+</ul>
+</li>
+<li>
+<strong>Veracity</strong> - Yes
+<ul>
+<li>The data is well structured, but not particularly clean</li>
+<li>Lots of holes, spelling mistakes, malformed info etc</li>
+</ul>
+</li>
+</ul>
+</section>
+<section >
+<h2>Approaches</h2>
+<p>Luke will be demonstrating an ETL process with SQL Server</p>
+<p>Tim will be showing off how to query the data in Hadoop</p>
+</section>
+<section >
+<h2>Mutual Goal</h2>
+<p>Tim and I have agreed to use our approaches to answer the following questions:</p>
+<ul>
+<li>Q1. For each artist, what is the most commonly tagged genre?</li>
+<li>Q2. What is the average tempo across all the songs in the dataset?</li>
+<li>Q3. Who are the top 10 artists for fast songs (based on tempo)?</li>
+<li>Q4. What are top ten songs based on their hotness in each genre?</li>
+</ul>
+</section>
+<section >
+<h2>Curveball</h2>
+<p>After we have finished our queries, we will be asking a curveball question to test the validity of each approach with changing requirements.</p>
+</section>
+<section >
+<h2>Constraints</h2>
+<p>Our company is footing the bill for each approach.</p>
+<p>So the cost needs to be small enough that neither of us get fired.</p>
+</section>
+<section >
+<p>Let's get started...</p>
+</section>
+</section>
+<section >
+<section >
+<h2>The SQL Server Approach</h2>
+<blockquote>
+<p>Who needs distributing processing eh?</p>
+</blockquote>
+</section>
+<section >
+<h2>Approach Taken</h2>
+<p><img src="images/approach_taken.png" alt="Approach Taken Diagram" /></p>
+</section>
+<section >
+<h2>Accessing the Data</h2>
+<p>AWS provides the Million Song Dataset for us as a <a href="https://aws.amazon.com/datasets/million-song-dataset/">500GB snapshot</a>.</p>
+<p>This can be attached for a Linux/Unix machine running in EC2</p>
+<p>I used a t2.medium size box (2 cores, 4GB RAM) running Ubuntu to access the data.</p>
+<p>Unfortunately the snapshot is only available in the US-East-1 datacenter (North Virginia), hence having to use something in the US</p>
+</section>
+<section >
+<h2>Reading the Files</h2>
+<p>The data comes in the form of "HDF5" files</p>
+<p>This format is designed for high volume data.</p>
+<p>Not exactly supported by Microsoft's SQL Server tools.</p>
+<p>They do however provide a Python script for querying HDF5 files</p>
+</section>
+<section >
+<h2>Model Being Used</h2>
+<p>Based on the questions we are answering from the set, I removed all unnecessary columns from our set.</p>
+<p>The model that will be output to CSV is:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="python">class Song(BaseSong):
+    attributes = [
+        "artist_id",        # Unique artist id in set
+        "artist_name",      # Artist name
+        "release",          # Album name
+        "title",            # Track name
+        "artist_mbtags",    # Genres &amp; other metadata
+        "tempo",            # For average tempo
+        "song_hotttnesss",  # I don't know what hotness is, but I wanna
+        "year"              # The year of release
+    ]
+</code></pre></td></tr></table>
+</section>
+<section >
+<h2>Converting to CSV</h2>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="python">i = 0
+songs = []
+flush_at = 2000
+
+for root, _, _ in os.walk(data_root):
+    for file in os.listdir(root):
+        file_path = os.path.join(root, file)
+        if os.path.isdir(file_path):
+            pass
+        if file_path.endswith(".h5"):
+            songs.extend(load_file(file_path))
+            i = i+1
+            if i % flush_at == 0:
+                output_to_csv(output_dir, i, songs)
+                clear_list(songs)
+
+if len(songs) &gt; 0:
+    output_to_csv(output_dir, i, songs)
+</code></pre></td></tr></table>
+</section>
+<section >
+<h2>Uploading to S3</h2>
+<p>Using the AWS Cli this is a doddle:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="bash">pip install awscli 
+
+aws configure
+
+aws s3 sync /data/output s3://big-data-bristol/million-songs-csv
+</code></pre></td></tr></table>
+</section>
+<section >
+<h2>Loading into SQL Server</h2>
+<p>Loaded the data in it's raw format into a SQL Server staging table:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="python">with SqlServerConnection(settings.connection_string) as database:
+    for file_name in os.listdir(script_folder):
+        with open(os.path.join(script_folder, file_name)) as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader) # Skip header
+            tracks = []
+            for row in reader:
+                tracks.append(Track(*row))
+            database.store_rows(tracks)
+</code></pre></td></tr></table>
+<p>Once it's in the database it's easier for us to manipulate.</p>
+</section>
+<section >
+<h2>Cleansing the Data</h2>
+<p>Now the data is in SQL, we can start to cleanse it ready for querying.</p>
+<p>Our target table structure is as follows:</p>
+<p><img src="images/million_song_model.png" alt="Database Model" /></p>
+</section>
+<section >
+<h2>Importing the Tracks</h2>
+<p>We'll import the tracks first, without the tags:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="k">INSERT</span> <span class="k">INTO</span> [dbo].[Track] (
+       [artist_id],[artist_name],[release],[title],
+       [tempo],[song_hotttnesss],[<span class="k">year</span>]
+)
+<span class="k">SELECT</span> [artist_id],[artist_name],[release],[title],
+       [tempo],[song_hotttnesss],[<span class="k">year</span>]
+<span class="k">FROM</span> dbo.Staging_Track
+</code></pre></td></tr></table>
+</section>
+<section >
+<h2>Parsing the Tags</h2>
+<p>We'll then parse the tags array into individual rows:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="c">-- Takes data in the form `['rock' 'pop' 'blues']` </span>
+<span class="c">-- and parses it into a row per tag</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> dbo.Tag ([name])
+<span class="k">SELECT</span> T.Tag
+<span class="k">FROM</span> (
+  <span class="k">SELECT</span> <span class="k">DISTINCT</span> tag.<span class="k">Value</span> <span class="k">AS</span> [Tag]
+  <span class="k">FROM</span> dbo.Staging_Track
+  <span class="k">CROSS</span> APPLY STRING_SPLIT ([artist_mbtags], <span class="s">''</span><span class="s">''</span>) tag
+) T
+<span class="k">WHERE</span> LTRIM(T.Tag) <span class="k">NOT</span> <span class="k">IN</span> (
+  <span class="s">'[]'</span>, <span class="s">'['</span>, <span class="s">']'</span>, <span class="s">''</span>
+) 
+<span class="c">-- Remove encoded whitespace</span>
+<span class="k">AND</span> ASCII(T.Tag) != <span class="n">10</span> 
+</code></pre></td></tr></table>
+</section>
+<section >
+<h2>Associating Tags to the Tracks</h2>
+<p>Finally we'll associate the tags with their original tracks:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="c">-- Associate the tags with the tracks we pulled them from</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> dbo.Track_Tag (TrackId, TagId)
+<span class="k">SELECT</span> <span class="k">DISTINCT</span> T.Id, Tag.Id
+<span class="k">FROM</span> dbo.Staging_Track ST 
+<span class="k">JOIN</span> dbo.Track T <span class="k">ON</span> 
+  ST.artist_id = T.artist_id <span class="k">AND</span>
+  ST.release = T.release <span class="k">AND</span>
+  ST.title = T.title
+<span class="c">-- Messy however it allows us to keep things set based</span>
+<span class="c">-- This does however mean the query takes a substantial time to run</span>
+<span class="k">JOIN</span> dbo.Tag Tag <span class="k">ON</span> ST.artist_mbtags <span class="k">LIKE</span> <span class="s">'%'</span><span class="s">''</span> + Tag.[name] + <span class="s">''</span><span class="s">'%'</span>
+</code></pre></td></tr></table>
+<p>(Side note: this is a terrible way of doing it!)</p>
+</section>
+<section >
+<h2>Querying the Data</h2>
+<p>OK, now the data is loaded, we can start answering the original questions posed</p>
+</section>
+<section >
+<p>For each artist, what is the most commonly tagged genre?</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="k">SELECT</span> *
+<span class="k">FROM</span> (
+  <span class="k">SELECT</span> *, [ranking] = ROW_NUMBER() <span class="k">OVER</span>(
+                    PARTITION <span class="k">BY</span> artist_id 
+                    <span class="k">ORDER</span> <span class="k">BY</span> times_tagged <span class="k">DESC</span>)
+  <span class="k">FROM</span> (
+    <span class="k">SELECT</span>  [artist_id] = T.artist_id, 
+        [artist_name] = <span class="k">MIN</span>(T.artist_name),
+        [tag_id] = TG.Id,
+        [tag_name] = TG.[name],
+        [times_tagged] = <span class="k">COUNT</span>(*)
+    <span class="k">FROM</span> dbo.Track T
+    <span class="k">JOIN</span> dbo.Track_Tag TT <span class="k">ON</span> TT.TrackId = T.Id
+    <span class="k">JOIN</span> dbo.Tag TG <span class="k">ON</span> TG.Id = TT.TagId
+    <span class="k">GROUP</span> <span class="k">BY</span> T.artist_id, TG.Id, TG.[name]
+  ) tags_by_artist
+) tags_by_artist
+<span class="k">WHERE</span> ranking = <span class="n">1</span>
+</code></pre></td></tr></table>
+</section>
+<section >
+<p>For each artist, what is the most commonly tagged genre?</p>
+<p><img src="images/q1_answers.png" alt="Q1 Answers" /></p>
+<p>(Sample of results)</p>
+</section>
+<section >
+<p>What is the average tempo across all the songs in the dataset?</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="k">SELECT</span> [average_tempo] = <span class="k">AVG</span>(tempo)
+<span class="k">FROM</span> dbo.Track
+</code></pre></td></tr></table>
+<p><img src="images/q2_answers.png" alt="Q2 Answers" /></p>
+</section>
+<section >
+<p>Who are the top ten artists for fast songs (based on their tempo)?</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="k">SELECT</span>  <span class="k">TOP</span>(<span class="n">10</span>)
+    [artist_id] = T.artist_id, 
+    [artist_name] = <span class="k">MIN</span>(T.artist_name),
+    [average_tempo] = <span class="k">AVG</span>(T.tempo)
+<span class="k">FROM</span> dbo.Track T
+<span class="k">GROUP</span> <span class="k">BY</span> T.artist_id
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="k">AVG</span>(T.tempo) <span class="k">DESC</span>
+</code></pre></td></tr></table>
+</section>
+<section >
+<p>Who are the top ten artists for fast songs (based on their tempo)?</p>
+<p><img src="images/q3_answers.png" alt="Q3 Answers" /></p>
+</section>
+<section >
+<p>What are top ten songs based on their hotness in each genre?</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="k">SELECT</span> *
+<span class="k">FROM</span> (
+  <span class="k">SELECT</span>  TG.Id, 
+      TG.[name], 
+      T.artist_name, 
+      T.title, 
+      T.song_hotttnesss,
+      [ranking] = ROW_NUMBER() <span class="k">OVER</span>(
+                            PARTITION <span class="k">BY</span> TG.Id 
+                            <span class="k">ORDER</span> <span class="k">BY</span> song_hotttnesss <span class="k">DESC</span>)
+  <span class="k">FROM</span> dbo.Track T
+  <span class="k">JOIN</span> dbo.Track_Tag TT <span class="k">ON</span> TT.TrackId = T.Id
+  <span class="k">JOIN</span> dbo.Tag TG <span class="k">ON</span> TG.Id = TT.TagId
+) hottest_tracks_by_tag
+<span class="k">WHERE</span> ranking &lt; <span class="n">11</span>
+</code></pre></td></tr></table>
+</section>
+<section >
+<p>What are top ten songs based on their hotness in each genre?</p>
+<p><img src="images/q4_answers_1.png" alt="Q4 Answers: Trip Hop" /></p>
+</section>
+<section >
+<p>What are top ten songs based on their hotness in each genre?</p>
+<p><img src="images/q4_answers_2.png" alt="Q4 Answers: Industrial" /></p>
+</section>
+<section >
+<p>What are top ten songs based on their hotness in each genre?</p>
+<p><img src="images/q4_answers_3.png" alt="Q3 Answers: Folk" /></p>
+</section>
+<section >
+<h2>Overall Timings</h2>
+<ol>
+<li>00:10 - Setup AWS EC2 instance</li>
+<li>10:00 - Export HDF5 data to CSVs</li>
+<li>00:10 - Upload CSVs to S3</li>
+<li>00:15 - Setup Azure SQL Database Instance</li>
+<li>00:10 - Download CSVs for import into SQL</li>
+<li>02:00 - Import the raw data into the database</li>
+<li>04:52 - Cleanse data for querying</li>
+<li>00:05 - Run queries to answer the questions proposed</li>
+</ol>
+<p>Total time taken: <strong>17 Hours 42 Minutes</strong></p>
+</section>
+<section >
+<h2>Total Cost</h2>
+<p>Estimates based on time the infrastructure was live:</p>
+<table>
+<tbody>
+<tr class="odd">
+<td><p>EBS Volumes</p></td>
+<td><p>£25.00</p></td>
+</tr>
+<tr class="even">
+<td><p>EC2 Instance</p></td>
+<td><p>£2.00</p></td>
+</tr>
+<tr class="odd">
+<td><p>S3 Storage</p></td>
+<td><p>£0.02</p></td>
+</tr>
+<tr class="even">
+<td><p>SQL Database</p></td>
+<td><p>£14.00</p></td>
+</tr>
+<tr class="odd">
+<td><p><strong>Total</strong></p></td>
+<td><p><strong>£41.02</strong></p></td>
+</tr>
+</tbody>
+</table>
+
+</section>
+<section >
+<h2>Curveball</h2>
+<blockquote>
+<p>Which <strong>countries</strong> have the most punk artists by year across the set?</p>
+</blockquote>
+<p>As I needed to cut down the data to just the columns we're interested in, we'd have to rerun the whole approach to gather the location details.</p>
+<p>Would need to use geospatial queries in SQL Server, which would increase the time required to load the data.</p>
+</section>
+</section>
+<section >
+<section >
+<h2>The Hadoop Approach</h2>
+</section>
+<section >
+<h2>Approach Taken</h2>
+<p>TODO</p>
+</section>
+<section >
+<h2>Timings</h2>
+<p>TODO</p>
+</section>
+<section >
+<h2>Cost</h2>
+<p>TODO</p>
+</section>
+<section >
+<h2>Findings</h2>
+<p>TODO</p>
+</section>
+<section >
+<h2>Curveball</h2>
+<p>TODO</p>
+</section>
+</section>
+<section >
+<h2>Conclusions</h2>
+<ul>
+<li>Advantages</li>
+<li>Disadvantages</li>
+<li>Improvements</li>
+</ul>
+</section>
+<section >
+<p><strong>Any Questions?</strong></p>
+</section>
+
+
+        </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script>
+        // Add the nohighlight class and data-noescape attribute to code elements that have already been formatted by FSharp.Formatting
+        $('pre.highlighted code').addClass('nohighlight').attr('data-noescape', '');
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Parallax scrolling
+            // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+            // parallaxBackgroundSize: '2100px 900px',
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+            ]
+        });
+
+    </script>
+</body>
+</html>
+
