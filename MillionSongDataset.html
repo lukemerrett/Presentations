@@ -140,10 +140,9 @@
 <h2>Mutual Goal</h2>
 <p>Tim and I have agreed to use our approaches to answer the following questions:</p>
 <ul>
-<li>Q1. For each artist, what is the most commonly tagged genre?</li>
-<li>Q2. What is the average tempo across all the songs in the dataset?</li>
-<li>Q3. Who are the top 10 artists for fast songs (based on tempo)?</li>
-<li>Q4. What are top ten songs based on their hotness in each genre?</li>
+<li>Q1. What is the average tempo across all the songs in the dataset?</li>
+<li>Q2. Who are the top 10 artists for fast songs (based on tempo)?</li>
+<li>Q3. What are top ten songs based on their hotness in each genre?</li>
 </ul>
 </section>
 <section >
@@ -389,52 +388,6 @@ aws s3 sync /data/output s3://big-data-bristol/million-songs-csv
 <p>OK, now the data is loaded, we can start answering the original questions posed</p>
 </section>
 <section >
-<p>For each artist, what is the most commonly tagged genre?</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
-<span class="l"> 2: </span>
-<span class="l"> 3: </span>
-<span class="l"> 4: </span>
-<span class="l"> 5: </span>
-<span class="l"> 6: </span>
-<span class="l"> 7: </span>
-<span class="l"> 8: </span>
-<span class="l"> 9: </span>
-<span class="l">10: </span>
-<span class="l">11: </span>
-<span class="l">12: </span>
-<span class="l">13: </span>
-<span class="l">14: </span>
-<span class="l">15: </span>
-<span class="l">16: </span>
-<span class="l">17: </span>
-<span class="l">18: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="k">SELECT</span> *
-<span class="k">FROM</span> (
-  <span class="k">SELECT</span> *, [ranking] = ROW_NUMBER() <span class="k">OVER</span>(
-                    PARTITION <span class="k">BY</span> artist_id 
-                    <span class="k">ORDER</span> <span class="k">BY</span> times_tagged <span class="k">DESC</span>)
-  <span class="k">FROM</span> (
-    <span class="k">SELECT</span>  [artist_id] = T.artist_id, 
-        [artist_name] = <span class="k">MIN</span>(T.artist_name),
-        [tag_id] = TG.Id,
-        [tag_name] = TG.[name],
-        [times_tagged] = <span class="k">COUNT</span>(*)
-    <span class="k">FROM</span> dbo.Track T
-    <span class="k">JOIN</span> dbo.Track_Tag TT <span class="k">ON</span> TT.TrackId = T.Id
-    <span class="k">JOIN</span> dbo.Tag TG <span class="k">ON</span> TG.Id = TT.TagId
-    <span class="k">GROUP</span> <span class="k">BY</span> T.artist_id, TG.Id, TG.[name]
-  ) tags_by_artist
-) tags_by_artist
-<span class="k">WHERE</span> ranking = <span class="n">1</span>
-</code></pre></td></tr></table>
-</section>
-<section >
-<p>For each artist, what is the most commonly tagged genre?</p>
-<p><img src="images/q1_answers.png" alt="Q1 Answers" /></p>
-<p>(Sample of results)</p>
-</section>
-<section >
 <p>What is the average tempo across all the songs in the dataset?</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
@@ -580,10 +533,6 @@ aws s3 sync /data/output s3://big-data-bristol/million-songs-csv
 </section>
 <section >
 <h2>Cost</h2>
-<p>TODO</p>
-</section>
-<section >
-<h2>Findings</h2>
 <p>TODO</p>
 </section>
 <section >
