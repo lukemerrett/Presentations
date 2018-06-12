@@ -522,18 +522,148 @@ aws s3 sync /data/output s3://big-data-bristol/million-songs-csv
 <section >
 <section >
 <h2>The Hadoop Approach</h2>
+<blockquote>
+<p>Because this would be a useless talk without it</p>
+</blockquote>
 </section>
 <section >
-<h2>Approach Taken</h2>
-<p>TODO</p>
+<h2>Source Data</h2>
+<ul>
+<li>Million Song Dataset</li>
+<li>500GB AWS EBS Snapshot</li>
+<li>1M HDF5 files</li>
+</ul>
 </section>
 <section >
-<h2>Timings</h2>
-<p>TODO</p>
+<h2>ETL Process</h2>
+<p><strong>Extract and Transform</strong></p>
+<p><img src="images/spark-logo-trademark.png" alt="spark-logo" /></p>
 </section>
 <section >
-<h2>Cost</h2>
-<p>TODO</p>
+<h2>ETL Process</h2>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="python">#Walk data folder to generate file list
+for root, dirs, files in os.walk(datapath):
+    for file in files:
+        filename, file_extension = os.path.splitext(file)
+        if file_extension == '.h5':
+            p=os.path.join(root,file)
+            fileList.append(p)
+
+#Distribute file list
+file_rdd = sc.parallelize(fileList)
+
+#Convert to csv
+file_rdd.map(lambda f : convertToCsv(f))
+</code></pre></td></tr></table>
+</section>
+<section >
+<h2>ETL Process</h2>
+<p><strong>Load</strong></p>
+<p><img src="images/horton_hive_logo.png" alt="hive logo" /></p>
+</section>
+<section >
+<h2>ETL Process</h2>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="sql"><span class="k">create</span> <span class="k">external</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> MSD
+(
+    artist_id string,
+    artist_name string,
+    release string,
+    title string,
+    artist_mbtags string,
+    tempo <span class="k">float</span>,
+    song_hotttnesss <span class="k">float</span>,
+    artist_location string,
+    artist_longitude <span class="k">float</span>,
+    artist_latitude <span class="k">float</span>,
+    <span class="k">year</span> <span class="k">int</span>
+) <span class="k">row</span> format delimited fields terminated <span class="k">by</span> <span class="s">','</span> stored <span class="k">as</span> textfile
+location <span class="s">'/data/files/msd'</span>
+tblproperties ("skip.header.line.<span class="k">count</span>"="<span class="n">1</span>");
+</code></pre></td></tr></table>
+</section>
+<section >
+<h2>Querying</h2>
+<p>Let's do it...</p>
+</section>
+<section >
+<h2>Time &amp; Cost</h2>
+<p><strong>Time taken for ETL</strong></p>
+<ul>
+<li>2x Workers  ~ 3.5hrs</li>
+</ul>
+<p><strong>Cost to import</strong></p>
+<ul>
+<li>3x EC2 Instances</li>
+<li>3x 500GB EBS Volume</li>
+<li>3.5hrs x <span class="math">\(0.58/hr =\)</span>2.10 (£1.50)</li>
+</ul>
+</section>
+<section >
+<h2>Time &amp; Cost</h2>
+<p><strong>Time taken for Queries</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th><p>Query</p></th>
+<th><p>Time</p></th>
+<th><p>Cost</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>1</p></td>
+<td><p>00:00:25.53</p></td>
+<td><p>0.02p</p></td>
+</tr>
+<tr class="even">
+<td><p>2</p></td>
+<td><p>00:00:38.76</p></td>
+<td><p>0.32p</p></td>
+</tr>
+<tr class="odd">
+<td><p>3</p></td>
+<td><p>00:00:36.56</p></td>
+<td><p>0.31p</p></td>
+</tr>
+<tr class="even">
+<td><p>Total</p></td>
+<td><p>00:01:04.29</p></td>
+<td><p>0.65p</p></td>
+</tr>
+</tbody>
+</table>
+
 </section>
 <section >
 <h2>Curveball</h2>
