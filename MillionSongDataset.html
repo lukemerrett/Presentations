@@ -138,7 +138,7 @@
 </section>
 <section >
 <h2>Mutual Goal</h2>
-<p>Tim and I have agreed to use our approaches to answer the following questions:</p>
+<p>We have agreed to use our approaches to answer the following questions:</p>
 <ul>
 <li>Q1. What is the average tempo across all the songs in the dataset?</li>
 <li>Q2. Who are the top 10 artists for fast songs (based on tempo)?</li>
@@ -667,16 +667,44 @@ tblproperties ("skip.header.line.<span class="k">count</span>"="<span class="n">
 </section>
 <section >
 <h2>Curveball</h2>
-<p>TODO</p>
+<blockquote>
+<p>Which <strong>countries</strong> have the most punk artists by year across the set?</p>
+</blockquote>
+<p>As all the data is loaded using Hive, no additional import is needed.</p>
+<p>In terms of querying; Hadoop does provide GIS functionality so we could use the lat/long to answer this question.</p>
 </section>
 </section>
 <section >
+<section >
 <h2>Conclusions</h2>
+</section>
+<section >
+<h2>Advantages of Hadoop Approach</h2>
 <ul>
-<li>Advantages</li>
-<li>Disadvantages</li>
-<li>Improvements</li>
+<li>Hadoop cost less for the ETL and was faster</li>
+<li>Can increase the size of the cluster to speed up the ETL</li>
+<li>Was able to load the whole data set, not a subset of columns</li>
+<li>Much less transformation of the data to get it into Hive</li>
+<li>Faster to start exploring a large data set</li>
 </ul>
+</section>
+<section >
+<h2>Advantages of SQL Server Approach</h2>
+<ul>
+<li>
+Hadoop cluster would cost most to keep online permenantly
+<ul>
+<li>SQL is cheaper if you need persistent access to the data</li>
+</ul>
+</li>
+<li>
+Takes 10 minutes to spin up the Hadoop cluster for querying
+<ul>
+<li>SQL is always running at a relatively low cost on Azure</li>
+</ul>
+</li>
+</ul>
+</section>
 </section>
 <section >
 <p><strong>Any Questions?</strong></p>
