@@ -62,8 +62,10 @@
 <div class="tip" id="fs14">namespace System</div>
 <div class="tip" id="fs15">type Int32 =<br />&#160;&#160;struct<br />&#160;&#160;&#160;&#160;member CompareTo : value:obj -&gt; int + 1 overload<br />&#160;&#160;&#160;&#160;member Equals : obj:obj -&gt; bool + 1 overload<br />&#160;&#160;&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;&#160;&#160;member GetTypeCode : unit -&gt; TypeCode<br />&#160;&#160;&#160;&#160;member ToString : unit -&gt; string + 3 overloads<br />&#160;&#160;&#160;&#160;static val MaxValue : int<br />&#160;&#160;&#160;&#160;static val MinValue : int<br />&#160;&#160;&#160;&#160;static member Parse : s:string -&gt; int + 3 overloads<br />&#160;&#160;&#160;&#160;static member TryParse : s:string * result:int -&gt; bool + 1 overload<br />&#160;&#160;end<br /><br />Full name: System.Int32</div>
 <div class="tip" id="fs16">System.Int32.TryParse(s: string, result: byref&lt;int&gt;) : bool<br />System.Int32.TryParse(s: string, style: System.Globalization.NumberStyles, provider: System.IFormatProvider, result: byref&lt;int&gt;) : bool</div>
-<div class="tip" id="fs17">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
-<div class="tip" id="fs18">val fold : folder:(&#39;State -&gt; &#39;T -&gt; &#39;State) -&gt; state:&#39;State -&gt; list:&#39;T list -&gt; &#39;State<br /><br />Full name: Microsoft.FSharp.Collections.List.fold</div>
+<div class="tip" id="fs17">val sin : value:&#39;T -&gt; &#39;T (requires member Sin)<br /><br />Full name: Microsoft.FSharp.Core.Operators.sin</div>
+<div class="tip" id="fs18">val cos : value:&#39;T -&gt; &#39;T (requires member Cos)<br /><br />Full name: Microsoft.FSharp.Core.Operators.cos</div>
+<div class="tip" id="fs19">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
+<div class="tip" id="fs20">val fold : folder:(&#39;State -&gt; &#39;T -&gt; &#39;State) -&gt; state:&#39;State -&gt; list:&#39;T list -&gt; &#39;State<br /><br />Full name: Microsoft.FSharp.Collections.List.fold</div>
 
         <!-- Any section element inside of this container is displayed as a slide -->
         <div class="slides">
@@ -472,8 +474,8 @@
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">angleInRads</span> <span class="o">=</span> <span class="i">turtle</span><span class="o">.</span><span class="i">angle</span> <span class="o">*</span> (<span class="i">Math</span><span class="o">.</span><span class="i">PI</span><span class="o">/</span><span class="n">180.0</span>)
 {<span class="i">turtle</span> <span class="k">with</span> 
-    <span class="i">xpos</span> <span class="o">=</span> <span class="i">turtle</span><span class="o">.</span><span class="i">xpos</span> <span class="o">+</span> (<span class="i">distance</span> <span class="o">*</span> <span class="i">Math</span><span class="o">.</span><span class="i">Sin</span>(<span class="i">angleInRads</span>))
-    <span class="i">ypos</span> <span class="o">=</span> <span class="i">turtle</span><span class="o">.</span><span class="i">ypos</span> <span class="o">+</span> (<span class="i">distance</span> <span class="o">*</span> <span class="i">Math</span><span class="o">.</span><span class="i">Cos</span>(<span class="i">angleInRads</span>))}
+    <span class="i">xpos</span> <span class="o">=</span> <span class="i">turtle</span><span class="o">.</span><span class="i">xpos</span> <span class="o">+</span> <span class="i">distance</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs17', 47)" onmouseover="showTip(event, 'fs17', 47)" class="i">sin</span> <span class="i">angleInRads</span>
+    <span class="i">ypos</span> <span class="o">=</span> <span class="i">turtle</span><span class="o">.</span><span class="i">ypos</span> <span class="o">+</span> <span class="i">distance</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs18', 48)" onmouseover="showTip(event, 'fs18', 48)" class="i">cos</span> <span class="i">angleInRads</span>}
 </code></pre></td>
 </tr>
 </table>
@@ -541,7 +543,7 @@
 <span class="l">2: </span>
 <span class="l">3: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs17', 47)" onmouseover="showTip(event, 'fs17', 47)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 48)" onmouseover="showTip(event, 'fs18', 48)" class="i">fold</span> (<span class="k">fun</span> <span class="i">agg</span> <span class="i">command</span> <span class="k">-&gt;</span> <span class="i">processCommand</span> <span class="i">agg</span> <span class="i">command</span>) 
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs19', 49)" onmouseover="showTip(event, 'fs19', 49)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 50)" onmouseover="showTip(event, 'fs20', 50)" class="i">fold</span> (<span class="k">fun</span> <span class="i">agg</span> <span class="i">command</span> <span class="k">-&gt;</span> <span class="i">processCommand</span> <span class="i">agg</span> <span class="i">command</span>) 
           <span class="i">turtle</span> 
           <span class="i">commands</span>
 </code></pre></td>
@@ -559,7 +561,7 @@
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">movedTurtle</span> <span class="o">=</span> 
     <span class="i">commands</span> 
-    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs17', 49)" onmouseover="showTip(event, 'fs17', 49)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 50)" onmouseover="showTip(event, 'fs18', 50)" class="i">fold</span> (<span class="k">fun</span> <span class="i">agg</span> <span class="i">command</span> <span class="k">-&gt;</span> <span class="i">processCommand</span> <span class="i">agg</span> <span class="i">command</span>) <span class="i">turtle</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs19', 51)" onmouseover="showTip(event, 'fs19', 51)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 52)" onmouseover="showTip(event, 'fs20', 52)" class="i">fold</span> (<span class="k">fun</span> <span class="i">agg</span> <span class="i">command</span> <span class="k">-&gt;</span> <span class="i">processCommand</span> <span class="i">agg</span> <span class="i">command</span>) <span class="i">turtle</span>
 </code></pre></td>
 </tr>
 </table>
